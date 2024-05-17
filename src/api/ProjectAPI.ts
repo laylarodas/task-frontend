@@ -53,7 +53,7 @@ type projectAPIType = {
 
 export async function updateProject({formData, projectId}: projectAPIType) {
     try {
-        const { data } = await api.put(`/projects/${projectId}`, formData
+        const { data } = await api.put<string>(`/projects/${projectId}`, formData
         )
         return data
         
