@@ -64,7 +64,7 @@ export default function AddTaskModal() {
                                         <span className="text-fuchsia-600">a task.</span>
                                     </p>
 
-                                    <form action="" className='mt-10 space-y-3' noValidate>
+                                    <form action="" className='mt-10 space-y-3' noValidate onClick={handleSubmit(handleCreateTask)}>
 
                                         <TaskForm register={register} errors={errors}/>
                                         <input
