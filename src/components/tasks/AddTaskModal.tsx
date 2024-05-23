@@ -1,28 +1,53 @@
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
 import TaskForm from './TaskForm';
 import { TaskFormData } from '@/types/index';
+import { createTask } from '@/api/TaskAPI';
+import { toast } from 'react-toastify';
 
 export default function AddTaskModal() {
 
     const navigate = useNavigate();
+
+    /*  Read if modal exists */
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const modalTask = queryParams.get('newTask')
     const show = modalTask ? true : false
-    console.log(modalTask)
+
+
+    /* Get project Id */
+    const params = useParams()
+    const projectId = params.projectId!
 
     const initialValues: TaskFormData = {
-        name:'',
+        name: '',
         description: ''
     }
 
-    const { register, handleSubmit, formState: {errors}} = useForm({defaultValues: initialValues})
+    const { register, handleSubmit, reset,formState: { errors } } = useForm({ defaultValues: initialValues })
 
-    const handleCreateTask = ( formData: TaskFormData) =>  {
-        console.log(formData)
+    const { mutate } = useMutation({
+        mutationFn: createTask,
+        onError: (error) => {
+            toast.error(error.message)
+        },
+        onSuccess: (data) => {
+            toast.success(data)
+            reset()
+            navigate(location.pathname, {replace: true})
+        },
+    })
+
+    const handleCreateTask = (formData: TaskFormData) => {
+        const data = {
+            formData,
+            projectId
+        }
+        mutate(data)
     }
 
     return (
@@ -66,7 +91,7 @@ export default function AddTaskModal() {
 
                                     <form action="" className='mt-10 space-y-3' noValidate onClick={handleSubmit(handleCreateTask)}>
 
-                                        <TaskForm register={register} errors={errors}/>
+                                        <TaskForm register={register} errors={errors} />
                                         <input
                                             type="submit"
                                             value="Save Task"
