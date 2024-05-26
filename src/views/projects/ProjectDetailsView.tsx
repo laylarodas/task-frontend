@@ -24,7 +24,7 @@ export default function ProjectDetailsView() {
     if (data) return (
         <>
             <h1 className=" text-4xl font-black">{data.projectName}</h1>
-            <p className=" text-xl font-light text-gray-500 mt-5">{data.description}</p>
+            <p className=" text-xl font-light text-gray-500 mt-5 capitalize">{data.description}</p>
             <nav className="my-5 flex gap-3">
                 <button
                     type="button"
