@@ -21,7 +21,7 @@ export default function Router() {
 
                 <Route element={<AuthLayout />}>
                     <Route path='/auth/login' element={<LoginView />} />
-                    <Route path='/auth/login' element={<RegisterView />} />
+                    <Route path='/auth/register' element={<RegisterView />} />
                 </Route>
             </Routes>
         </BrowserRouter>
