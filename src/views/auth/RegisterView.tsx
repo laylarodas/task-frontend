@@ -141,6 +141,9 @@ export default function RegisterView() {
                 <Link to={'/auth/login'} className=" text-center text-gray-300 font-normal">
                     Already have you an account? <span className=" font-bold">Login</span>
                 </Link>
+                <Link to={'/auth/forgot-password'} className=" text-center text-gray-300 font-normal">
+                    Forgot your password? <span className=" font-bold"> Reset</span>
+                </Link>
             </nav>
         </>
     )
