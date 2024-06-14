@@ -9,6 +9,7 @@ export default function NewPasswordView() {
   const [ token, setToken ] = useState<ConfirmToken['token']>('')
   const [ isValidToken, setIsValidToken ] = useState(false)
 
+  console.log(token)
 
   return (
     <>
@@ -20,7 +21,7 @@ export default function NewPasswordView() {
 
       {!isValidToken ? 
           <NewPasswordToken token={token} setToken={setToken} setIsValidToken={setIsValidToken} /> 
-        : <NewPasswordForm />   }
+        : <NewPasswordForm token={token}/>   }
     </>
   )
 }
