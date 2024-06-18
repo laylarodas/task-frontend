@@ -12,7 +12,7 @@ export const AppLayout = () => {
     if (isLoading) return 'Loading...'
     if (isError) return <Navigate to='/auth/login'/>
 
-    return (
+    if(data) return (
         <>
             <header className="bg-gray-800 py-5">
                 <div className=" max-w-screen-xl mx-auto flex flex-col lg:flex-row justify-between items-center">
@@ -20,7 +20,7 @@ export const AppLayout = () => {
                         <Link to={'/'}>
                             <Logo />
                         </Link>
-
+                        
                     </div>
 
                     <NavMenu />
