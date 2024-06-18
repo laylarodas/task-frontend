@@ -23,7 +23,7 @@ export const AppLayout = () => {
                         
                     </div>
 
-                    <NavMenu />
+                    <NavMenu name={data.name}/>
                 </div>
             </header>
 
