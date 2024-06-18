@@ -3,12 +3,21 @@ import { Popover, Transition } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 import { User } from '../types'
+import { useQueryClient } from '@tanstack/react-query'
 
 type NavMenuProps = {
   name: User['name']
 }
 
 export default function NavMenu({name}: NavMenuProps) {
+
+  const queryClient = useQueryClient()
+
+
+  const logout = () => {
+    localStorage.removeItem('AUTH_TOKEN')
+    queryClient.invalidateQueries({queryKey: ['user']})
+  }
 
   return (
     <Popover className="relative">
@@ -39,7 +48,7 @@ export default function NavMenu({name}: NavMenuProps) {
             <button
               className='block p-2 w-full text-start hover:bg-purple-300 rounded-lg'
               type='button'
-              onClick={() => { }}
+              onClick={ () => logout()}
             >
               Logout
             </button>
