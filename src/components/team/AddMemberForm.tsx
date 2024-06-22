@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage } from "../ErrorMessage";
 import { TeamMemberForm } from "@/types/index";
+import { findUserByEmail } from "@/api/TeamAPI";
 
 export default function AddMemberForm() {
     const initialValues: TeamMemberForm = {
@@ -11,11 +12,17 @@ export default function AddMemberForm() {
     const params = useParams()
     const projectId = params.projectId!
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues })
+    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
 
-    const mutation = useMutation({})
+    const mutation = useMutation({
+        mutationFn: findUserByEmail,
+    })
 
-    const handleSearchUser = async () => {}
+    const handleSearchUser = async (formData: TeamMemberForm) => {
+        const data = { projectId, formData }
+        mutation.mutate(data)
+
+    }
 
     return (
         <>
@@ -55,6 +62,11 @@ export default function AddMemberForm() {
                     value='Search User'
                 />
             </form>
+
+            <div className="mt-10">
+                {mutation.isPending && <div className="text-center">Loading...</div>}
+                {mutation.isError && <p className="text-center">{mutation.error?.message}</p>}
+            </div>
         </>
     )
 }
