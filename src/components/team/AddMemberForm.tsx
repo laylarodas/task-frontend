@@ -14,7 +14,7 @@ export default function AddMemberForm() {
     const params = useParams()
     const projectId = params.projectId!
 
-    const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues })
 
     const mutation = useMutation({
         mutationFn: findUserByEmail,
@@ -24,6 +24,11 @@ export default function AddMemberForm() {
         const data = { projectId, formData }
         mutation.mutate(data)
 
+    }
+
+    const resetData = () => {
+        reset(),
+        mutation.reset()
     }
 
     return (
@@ -68,7 +73,7 @@ export default function AddMemberForm() {
             <div className="mt-10">
                 {mutation.isPending && <div className="text-center">Loading...</div>}
                 {mutation.isError && <p className="text-center">{mutation.error?.message}</p>}
-                {mutation.data && <SearchResult user={mutation.data} />}
+                {mutation.data && <SearchResult user={mutation.data} reset={resetData}/>}
             </div>
         </>
     )
