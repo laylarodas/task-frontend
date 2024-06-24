@@ -1,4 +1,4 @@
-import { AddUserToProject } from "@/api/TeamAPI"
+import { addUserToProject } from "@/api/TeamAPI"
 import { TeamMember } from "@/types/index"
 import { useMutation } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
@@ -16,7 +16,7 @@ export default function SearchResult({user, reset}: SearchResultProps) {
     const projectId = params.projectId!
 
     const { mutate } = useMutation({
-        mutationFn: AddUserToProject,
+        mutationFn: addUserToProject,
         onError: (error) => {
             toast.error(error.message)
         },
