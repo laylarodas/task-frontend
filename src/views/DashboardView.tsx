@@ -5,9 +5,11 @@ import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteProject, getProjects } from '@/api/ProjectAPI'
 import { toast } from 'react-toastify'
+import { useAuth } from '@/hooks/useAuth'
 
 export const DashboardView = () => {
 
+  const { data: user, isLoading: authLoading } = useAuth()
   const { data, isLoading } = useQuery({
     queryKey: ['projects'],
     queryFn: getProjects
@@ -21,14 +23,15 @@ export const DashboardView = () => {
     },
     onSuccess: (data) => {
       toast.success(data)
-      queryClient.invalidateQueries({queryKey: ['projects']})
+      queryClient.invalidateQueries({ queryKey: ['projects'] })
     }
   })
 
-  if (isLoading) return 'Loading...'
+  if (isLoading && authLoading) return 'Loading...'
 
   console.log(data)
-  if (data) return (
+  console.log(user?._id)
+  if (data && user) return (
     <>
       <h1 className=" text-5xl font-black"> My Projects</h1>
       <p className="  text-2xl font-light text-gray-500 mt-5">
@@ -76,21 +79,26 @@ export const DashboardView = () => {
                           See Project
                         </Link>
                       </Menu.Item>
-                      <Menu.Item>
-                        <Link to={`/projects/${project._id}/edit`}
-                          className='block px-3 py-1 text-sm leading-6 text-gray-900'>
-                          Edit Project
-                        </Link>
-                      </Menu.Item>
-                      <Menu.Item>
-                        <button
-                          type='button'
-                          className='block px-3 py-1 text-sm leading-6 text-red-500'
-                          onClick={() => mutate(project._id)}
-                        >
-                          Delete Project
-                        </button>
-                      </Menu.Item>
+                      {user._id === project.manager && (
+                        <>
+                          <Menu.Item>
+                            <Link to={`/projects/${project._id}/edit`}
+                              className='block px-3 py-1 text-sm leading-6 text-gray-900'>
+                              Edit Project
+                            </Link>
+                          </Menu.Item>
+                          <Menu.Item>
+                            <button
+                              type='button'
+                              className='block px-3 py-1 text-sm leading-6 text-red-500'
+                              onClick={() => mutate(project._id)}
+                            >
+                              Delete Project
+                            </button>
+                          </Menu.Item>
+                        </>
+                      )}
+
                     </Menu.Items>
                   </Transition>
                 </Menu>
