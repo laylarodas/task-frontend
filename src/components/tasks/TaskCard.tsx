@@ -8,10 +8,11 @@ import { deleteTask } from "@/api/TaskAPI"
 import { toast } from "react-toastify"
 
 type TaskCardProps = {
-    task: Task
+    task: Task,
+    canEdit?: boolean
 }
 
-export default function TaskCard({ task }: TaskCardProps) {
+export default function TaskCard({ task, canEdit }: TaskCardProps) {
 
     const navigate = useNavigate();
     const params = useParams()
@@ -21,9 +22,9 @@ export default function TaskCard({ task }: TaskCardProps) {
 
     const { mutate } = useMutation({
         mutationFn: deleteTask,
-        onError:(error) => {
+        onError: (error) => {
             toast.error(error.message)
-        } ,
+        },
         onSuccess: (data) => {
             toast.success(data)
             queryClient.invalidateQueries({ queryKey: ['project', projectId] })
@@ -34,7 +35,7 @@ export default function TaskCard({ task }: TaskCardProps) {
     return (
         <li className=" p-5 bg-white border border-slate-300 flex justify-between gap-3">
             <div className=" min-w-0 flex flex-col gap-y-4">
-                <button type="button" className=" text-xl font-bold text-slate-600 text-left">{task.name}</button>
+                <button type="button" className=" text-xl font-bold text-slate-600 text-left" onClick={() => navigate(location.pathname + `?viewTask=${task._id}`)}>{task.name}</button>
                 <p className="text-slate-500">
                     {task.description}
                 </p>
@@ -51,33 +52,39 @@ export default function TaskCard({ task }: TaskCardProps) {
                         <Menu.Items
                             className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
                             <Menu.Item>
-                                <button 
-                                    type='button' 
+                                <button
+                                    type='button'
                                     className='block px-3 py-1 text-sm leading-6 text-gray-900'
                                     onClick={() => navigate(location.pathname + `?viewTask=${task._id}`)}
                                 >
                                     See Task
                                 </button>
                             </Menu.Item>
-                            <Menu.Item>
-                                <button 
-                                    type='button' 
-                                    className='block px-3 py-1 text-sm leading-6 text-gray-900' 
-                                    onClick={() => navigate(location.pathname + `?editTask=${task._id}`)}
-                                >
-                                    Edit Task
-                                </button> 
-                            </Menu.Item>
 
-                            <Menu.Item>
-                                <button 
-                                    onClick={() => mutate({projectId, taskId: task._id})}
-                                    type='button' 
-                                    className='block px-3 py-1 text-sm leading-6 text-red-500'
-                                >
-                                    Delete Task
-                                </button>
-                            </Menu.Item>
+                            {canEdit && (
+                                <>
+                                    <Menu.Item>
+                                        <button
+                                            type='button'
+                                            className='block px-3 py-1 text-sm leading-6 text-gray-900'
+                                            onClick={() => navigate(location.pathname + `?editTask=${task._id}`)}
+                                        >
+                                            Edit Task
+                                        </button>
+                                    </Menu.Item>
+
+                                    <Menu.Item>
+                                        <button
+                                            onClick={() => mutate({ projectId, taskId: task._id })}
+                                            type='button'
+                                            className='block px-3 py-1 text-sm leading-6 text-red-500'
+                                        >
+                                            Delete Task
+                                        </button>
+                                    </Menu.Item>
+                                </>
+                            )}
+
                         </Menu.Items>
                     </Transition>
                 </Menu>
