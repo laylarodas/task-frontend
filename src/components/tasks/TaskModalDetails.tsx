@@ -95,7 +95,7 @@ export default function TaskModalDetails() {
 
                                     {data.completedBy.length ? (
                                         <>
-                                            <p className='text-xl text-slate-500 mb-2'>Change History</p>
+                                            <p className='font-bold text-2xl text-slate-600 my-5'>Change History</p>
 
                                             <ul className=' list-decimal' >
                                                 {data.completedBy.map((activityLog) => (
@@ -126,7 +126,7 @@ export default function TaskModalDetails() {
                                     </div>
 
 
-                                    <NotesPanel />
+                                    <NotesPanel notes={data.notes}/>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
