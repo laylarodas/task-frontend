@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { formatDate } from '@/utils/utils';
 import { statusTranslations } from '@/locales/en';
 import { taskStatus } from '@/types/index';
+import NotesPanel from '../notes/NotesPanel';
 
 export default function TaskModalDetails() {
 
@@ -16,12 +17,12 @@ export default function TaskModalDetails() {
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
     const taskId = queryParams.get('viewTask')! // ! taskId always exists
-    
-    const show =  taskId ? true : false
+
+    const show = taskId ? true : false
 
     const { data, isError, error } = useQuery({
         queryKey: ['task', taskId],
-        queryFn: () => getTaskById({projectId, taskId}),
+        queryFn: () => getTaskById({ projectId, taskId }),
         enabled: !!taskId,
         retry: false
     })
@@ -35,8 +36,8 @@ export default function TaskModalDetails() {
         },
         onSuccess: (data) => {
             toast.success(data)
-            queryClient.invalidateQueries({queryKey: ['project', projectId]})
-            queryClient.invalidateQueries({queryKey: ['task', taskId]})
+            queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+            queryClient.invalidateQueries({ queryKey: ['task', taskId] })
         }
     })
 
@@ -44,21 +45,21 @@ export default function TaskModalDetails() {
         console.log(e.target.value)
 
         const status = e.target.value as taskStatus
-        const data = { projectId, taskId , status}
+        const data = { projectId, taskId, status }
 
         mutate(data)
 
     }
 
     if (isError) {
-        toast.error(error.message, { toastId: 'error'})
+        toast.error(error.message, { toastId: 'error' })
         return <Navigate to={`/projects/${projectId}`} />
     }
-  
+
     if (data) return (
         <>
             <Transition appear show={show} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => navigate(location.pathname, {replace: true})}>
+                <Dialog as="div" className="relative z-10" onClose={() => navigate(location.pathname, { replace: true })}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -92,19 +93,27 @@ export default function TaskModalDetails() {
                                     </Dialog.Title>
                                     <p className='text-lg text-slate-500 mb-2 capitalize'>Description: {data.description}</p>
 
-                                    <ul className=' text-xl text-slate-500 mb-2'>Change History</ul>
-                                    {data.completedBy.map( (activityLog) =>(
-                                        <li className=' list-decimal' key={activityLog._id}>
-                                            <span className=' font-bold text-slate-600'>{  statusTranslations[activityLog.status]}:</span> {' '}
-                                            {activityLog.user.name}
-                                        </li>
-                                    
-                                    ))}
+                                    {data.completedBy.length ? (
+                                        <>
+                                            <p className='text-xl text-slate-500 mb-2'>Change History</p>
+
+                                            <ul className=' list-decimal' >
+                                                {data.completedBy.map((activityLog) => (
+                                                    <li key={activityLog._id}>
+                                                        <span className=' font-bold text-slate-600'>{statusTranslations[activityLog.status]}:</span> {' '}
+                                                        {activityLog.user.name}
+                                                    </li>
+
+                                                ))}
+                                            </ul>
+                                        </>
+                                    ): null}
+
 
                                     <div className='my-5 space-y-3'>
                                         <label className='font-bold capitalize'>Actual State: </label>
 
-                                        <select 
+                                        <select
                                             className='w-full p-3 bg-white border border-gray-300'
                                             defaultValue={data.status}
                                             onChange={handleChange}
@@ -115,6 +124,9 @@ export default function TaskModalDetails() {
                                             )}
                                         </select>
                                     </div>
+
+
+                                    <NotesPanel />
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
